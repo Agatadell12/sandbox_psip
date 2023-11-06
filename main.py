@@ -1,58 +1,34 @@
 from dane import users_list
+#from utils.my_fanctiones import add_user_to, remove_user_from
+#show_users_from
+def gui(users_list:list)->None:
+    while True:
+        print( f'Menu: \n' 
+            f'0: Wyjdz \n'
+            f'1: Wyświetl uztkowników \n'
+            f'2:Dodaj uzytkownika \n'
+            f'3: Usun uzytkownika \n'
+            f'4: Modyfikuj uzytkownika \n'
+           )
+        menu_option = input("Podaj funkcje do wywolania - ")
+        print(f'Wybrano funkcje {menu_option}')
 
-def add_user_to(users_list: list) -> None:
-    """
-    add object to list
-    :param users_list: list - user list
-    :return: None
-    """
-    name = input('podaj imie ?')
-    posts = input('podaj liczbe postow ?')
-    users_list.append({'name':name, 'posts': posts})
+        match menu_option:
+            case "0":
+                print("Koncze prace")
+                break
+            case "1":
+                print("Wyswietlam uzytkownika")
+                show_users_from(users_list)
+            case "2":
+                print("Dodaje uzytkownika")
+                add_user_to(users_list)
+            case "3":
+                print("Usuwam uzytkownika")
+                remove_user_from(users_list)
+            case "4":
+                print("Usuwam uzytkownika")
+                print("TODO")
 
+gui()
 
-# add_user_to(users_list)
-
-# mechanizm usuwania
-
-def  remove_user_from(users_list: list) -> None:
-    """
-    remove object from list
-    :param users_list: list - user list
-    :return: None
-    """
-
-    tap_list = []
-    name = input('podaj imie uzytkownika do usuniecia')
-    for user in users_list:
-        if user['name'] == name:
-            tap_list.append(user)
-    print('Znaleziono uzytkownikow :')
-    print('0: Usun wszystkich zmienionych uzytkownikow')
-    for numerek, user_to_be_removed in enumerate(tap_list):
-       print(f'{numerek + 1}: {user_to_be_removed}')
-    numer = int(input(f'Wybierz uzytkownika do usuniecia'))
-    if numer == 0:
-        for user in users_list:
-            if user['name'] == name:
-                users_list.remove(user)
-    else:
-        users_list.remove(tap_list[numer-1])
-    #print(numer)
-    #print(tap_list[numer-1])
-    #users_list.remove(tap_list[numer -1])
-
-
-
-
-            # usuwanie znalezionego uzytkownika  z listy
-
-
-remove_user_from(users_list)
-
-
-
-
-# print users_list
-for user in users_list:
-    print(f'Twój znajomy {user["name"]} dodał {user["posts"]}')
