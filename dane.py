@@ -5,6 +5,8 @@ users_list = [
     {"name":"Kamil","nick":"KOC","posts":332},
     {"name":"Marek","nick":"wiss","posts":0},
     {"name":"Wiktoria","nick":"witka","posts":500},
-    {"name":"Wiktoria","nick":"Mona","posts":44}
+    {"name":"Wiktoria","nick":"Mona","posts":44},
+    {"name":"Agata","nick":"AAA","posts":5657555756}
+
     ]
 
