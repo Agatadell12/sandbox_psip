@@ -1,12 +1,11 @@
 users_list = [
-    {"name":"agata","nick":"mjr","posts":0},
-    {"name":"mateusz","nick":"świetlik","posts":2000},
-    {"name":"Bartosz","nick":"Baran","posts":31245},
-    {"name":"Kamil","nick":"KOC","posts":332},
-    {"name":"Marek","nick":"wiss","posts":0},
-    {"name":"Wiktoria","nick":"witka","posts":500},
-    {"name":"Wiktoria","nick":"Mona","posts":44},
-    {"name":"Agata","nick":"AAA","posts":5657555756}
-
-    ]
-
+                   {"name":"Kasia" , "nick":"katarzyna","posts":1},
+                   {"name":"Mateusz" , "nick":"świetlik","posts":60},
+                   {"name":"Bartosz" , "nick":"Baran","posts":31231},
+                   {"name":"Kamil" , "nick":"Koc","posts":123},
+                   {"name":"Marek" , "nick":"Wisse","posts":5343},
+                   {"name":"Agata" , "nick":"Drzygało","posts":333},
+                   {"name":"Monika" , "nick":"Szczepaniuk","posts":4342},
+                   {"name":"Kinga" , "nick":"Kinia","posts":42},
+                   {"name":"Marek" , "nick":"mmm","posts":22}
+]
