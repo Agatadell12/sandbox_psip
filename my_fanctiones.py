@@ -53,7 +53,6 @@ def gui(users_list) -> None:
         match menu_option:
             case '0':
                 print('Kończę prace')
-                # break
             case '1':
                 print('Wyświetl nazwę użytkownika')
                 show_users_from(users_list)
