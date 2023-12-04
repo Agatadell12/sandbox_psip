@@ -142,6 +142,7 @@ def get_map_of(users: list[dict, dict]) -> None:
                   f'Liczba postów {user["posts"]}'
         ).add_to(map)
         map.save(f'mapka.html')
+
 def update_user(users_list: list[dict, dict]) -> None:
     nick_of_user = input("Podaj nick użytkownika do modyfikacji:")
     print(nick_of_user)
@@ -152,3 +153,7 @@ def update_user(users_list: list[dict, dict]) -> None:
             user['nick'] = input("Podaj nowA ksywkę: ")
             user['posts'] = int(input("Podaj liczbę postów: "))
             user['city'] = int(input("Podaj miasto:"))
+
+def pogoda_z(miasto: str):
+    url = f'https://danepubliczne.imgw.pl/api/data/synop/station/{miasto}'
+    return requests.get(url).json()
