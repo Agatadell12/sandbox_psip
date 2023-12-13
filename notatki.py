@@ -1,6 +1,6 @@
 import sqlalchemy
 
-db_params = sqlalchemy.URL.create(
+db_params = sqlalchemy.engine.URL.create(
     drivername="postgresql+psycopg2",
     username="postgres",
     password="Psip_2023",
@@ -21,7 +21,7 @@ connection = engine.connect()
 # sql_query_1 = sqlalchemy.text("UPDATE public.my_table SET name= {'na_kogo'} WHERE name= {'kogo_zamienic'};")
 
 def dodaj_uzytkownika(user: str):
-    sql_query_1 = sqlalchemy.text("INSERT INTO public.my_table( name) VALUES('{user}');")
+    sql_query_1 = sqlalchemy.text("INSERT INTO public.my_tabel( name) VALUES('{user}');")
     connection.execute(sql_query_1)
     connection.commit()
 
@@ -29,7 +29,7 @@ def dodaj_uzytkownika(user: str):
 # dodaj_uzytkownika(cwok)
 
 def usun_uzytkownika(user: str):
-    sql_query_1 = sqlalchemy.text("DELETE FROM public.my_table WHERE name='{user}';")
+    sql_query_1 = sqlalchemy.text("DELETE FROM public.my_tabel WHERE name='{user}';")
     connection.execute(sql_query_1)
     connection.commit()
 
@@ -37,13 +37,15 @@ def usun_uzytkownika(user: str):
 # usun_uzytkownika(cwok)
 
 def aktualizuj_uzytkonika(user_1: str, user_2: str):
-    sql_query_1 = sqlalchemy.text("UPDATE public.my_table SET name= {'user_1'} WHERE name= {'user_2'};")
-    connection.execute(sql_query_1)
+    sql_query_1 = sqlalchemy.text("UPDATE public.my_tabel SET name= :user_1 WHERE name= :user_2;")
+    connection.execute(sql_query_1, {'user_1': user_1, 'user_2': user_2})
     connection.commit()
 
 aktualizuj_uzytkonika(
-    user_1=input('kogo zaminic'),
-    user_2=input('na kogo zmienic'))
+    user_1=input('kogo zaminic '),
+    user_2=input('na kogo zmienic '))
+
+
 
 # connection.execute(sql_query_1)
 # connection.commit()
