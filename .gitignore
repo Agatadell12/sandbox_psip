@@ -152,3 +152,4 @@ cython_debug/
 #.idea/
 mapka.html
 mapka_Agata.html
+.env
