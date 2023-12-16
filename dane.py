@@ -7,5 +7,6 @@ users_list = [
     {"city": "Hrubieszów", "name": "Agata", "nick": "Drzygało", "posts": 333},
     {"city": "Mińsk_Mazowiecki", "name": "Monika", "nick": "Szczepaniuk", "posts": 4342},
     {"city": "Koszalin", "name": "Kinga", "nick": "Kinia", "posts": 42},
-    {"city": "Ślipcze", "name": "Marek", "nick": "mmm", "posts": 22}
+    {"city": "Ślipcze", "name": "Marek", "nick": "mmm", "posts": 22},
+    {"city": "Ełk", "name": "Piotr", "nick": "Fluk", "posts": 666}
 ]

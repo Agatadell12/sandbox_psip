@@ -1,53 +1,84 @@
-import folium
+import psycopg2
 from bs4 import BeautifulSoup
 import requests
 import folium
 
-def add_user_to(users_list: list) -> None:
+db_params = psycopg2.connect(
+    database='postgres',
+    user='postgres',
+    password='Psip_2023',
+    host='localhost',
+    port=5432
+)
+
+cursor = db_params.cursor()
+def add_user_to() -> None:
     """
     add object to list
     :param users_list: list - user list
     :return: None
     """
-    name = input('podaj imie ?')
-    posts = input('podaj liczbe postow ?')
-    city = input('podaj miasto')
-    users_list.append({'name': name, 'posts': posts, "city": city})
+    name = input('Podaj imie!')
+    posts = input('Podaj liczbe postow!')
+    city = input('Podaj miasto!')
+    nick = input('Podaj nick!')
+    sql_query_1 = f"INSERT INTO public.aplikacjon(city, name, nick, posts) VALUES('{nick['city']}', '{nick['name']}', '{nick['nick']}', {nick['posts']});"
+    cursor.execute(sql_query_1)
+    db_params.commit()
 
 
-def remove_user_from(users_list: list) -> None:
+def remove_user_from() -> None:
     """
     remove object from list
     :param users_list: list - user list
     :return: None
     """
-
-    tap_list = []
     name = input('podaj imie uzytkownika do usuniecia')
-    for user in users_list:
-        if user['name'] == name:
-            tap_list.append(user)
+    sql_query_1 = f"SELECT * FROM public.aplikacjon WHERE name='{name}';"
+    cursor.execute(sql_query_1)
+    query_result = cursor.fetchall()
     print('Znaleziono uzytkownikow :')
     print('0: Usun wszystkich zmienionych uzytkownikow')
-    for numerek, user_to_be_removed in enumerate(tap_list):
+    for numerek, user_to_be_removed in enumerate(query_result):
         print(f'{numerek + 1}: {user_to_be_removed}')
     numer = int(input(f'Wybierz uzytkownika do usuniecia'))
     if numer == 0:
-        for user in tap_list:
-            users_list.remove(user)
+        sql_query_2 = f"DELETE * FROM public.aplikacjon;"
+        cursor.execute(sql_query_2)
+        db_params.commit()
     else:
-        users_list.remove(tap_list[numer - 1])
+        sql_query_2 = f"DELETE FROM public.aplikacjon WHERE name='{query_result[numer - 1][2]}';"
+        cursor.execute(sql_query_2)
+        db_params.commit()
 
 
-def show_users_from(users_list: list) -> None:
-    for user in users_list:
-        print(f'Twój znajomy {user["name"]} dodał {user["posts"]}')
+def show_users_from() -> None:
+    sql_query_1 = f"SELECT * FROM public.aplikacjon;"
+    cursor.execute(sql_query_1)
+    query_result=cursor.fetchall()
+    for row in query_result:
+        print(f'Twój znajomy {row[2]} dodał {row[4]}')
+
+def update_user(users_list: list[dict, dict]) -> None:
+    nick_of_user = input("Podaj nick użytkownika do modyfikacji:")
+    sql_query_1 = f"SELECT * FROM public.aplikacjon WHERE nick='{nick_of_user}';"
+    cursor.execute(sql_query_1)
+    print('Znaleziono')
+    name = input('Podaj nowe imie: ')
+    nick = input('Podaj nowe ksywke: ')
+    posts = int(input('Podaj liczbe postow: '))
+    city = input('Podaj nazwe miasta: ')
+    sql_query_2 = f"UPDATE public.aplikacjon SET name='{name}',nick='{nick}', posts='{posts}', city='{city}' WHERE nick='{nick_of_user}';"
+    cursor.execute(sql_query_2)
+    db_params.commit()
+
+# FUNKCJE MAPKI !!!
 
 
-def gui(users_list, user_list=None) -> None:
+def gui() -> None:
     while True:
         print(f'MENU'
-              f'Wyjdź\n'
+              f'0: Wyjdź\n'
               f'1: Wyświetl użytkowników\n'
               f'2: Dodaj użytkownika\n'
               f'3: Usuń użytkownika\n'
@@ -63,39 +94,32 @@ def gui(users_list, user_list=None) -> None:
                 print('Kończę prace')
             case '1':
                 print('Wyświetl nazwę użytkownika')
-                show_users_from(users_list)
+                show_users_from()
             case '2':
                 print('Dodaj użytkownika')
-                add_user_to(users_list)
+                add_user_to()
             case '3':
                 print('Usuwam użytkownika')
-                remove_user_from(users_list)
+                remove_user_from()
             case '4':
                 print('Modyfikuj uzytkownika')
-                update_user(users_list)
+                update_user()
             case '5':
                 print('Rysuj mapę z użytkownikiem')
-                user = input('podaj nazwe użytkownika do modyfikacji')
-                for item in users_list:
-                    if item['nick']== user:
-                        get_single_map_of(item)
+                get_single_map_of()
             case '6':
                 print('Rysuj mapę z wszytkimi użytkownikami ')
-                get_map_of(users_list)
-
-
-nazwy_miejscowosci = ['Opoczno', 'Lublin', 'Ślipcze', 'Czumów', 'Berlin']
+                get_map_of()
 
 
 def get_cooordinate_of(city: str) -> list[float, float]:
     # pobranie strony internetowej
 
     adres_URL = f'https://pl.wikipedia.org/wiki/{city}'
-    response = requests.get(url=adres_URL)
+    response = requests.get(url=adres_URL) #zwraca obiekty
     response_html = BeautifulSoup(response.text, 'html.parser')
 
     # pobranie współrzędnych z treści strony internetowej
-
     response_html_latitude = response_html.select('.latitude')[1].text  # . ponieważ class
     response_html_latitude = float(response_html_latitude.replace(',', '.'))
 
@@ -104,56 +128,58 @@ def get_cooordinate_of(city: str) -> list[float, float]:
 
     return [response_html_latitude, response_html_longitude]
 
-
-# for item in nazwy_miejscowosci:
-# print(get_cooordinate_of(item))
-
-
-# from .dane import users_list
-
-# Zwrócić mape z pinezką odnoszącą się do wskaznego na podstawie nazwy użytkownika podanej z klawiatury
-user = {"city": "Zamość", "name": "Kasia", "nick": "katarzyna", "posts": 32323},
-
-
-# Zwróci mapę z wszystkimi użytkownikami z danej listy
 ##Rysowanie mapy
-def get_single_map_of(user: str) -> None:
-    city = get_cooordinate_of(user['city'])
+def get_single_map_of() -> None:
+    city = input('Wpisz miasto uzytkownika: ')
+    sql_query_1 = f"SELECT * FROM public.aplikacjon WHERE city='{city}';"
+    cursor.execute(sql_query_1)
+    query_result = cursor.fetchall()
+    city = get_cooordinate_of(city)
     map = folium.Map(
         location=city,
         tiles='OpenStreetMap',
         zoom_start=14, )
-    folium.Marker(
-        location=city,
-        popup=f'Tu rządzi {user["name"]} z GEOINFORMATYKi 2023 \n OU YEAH!!!💃'
-    ).add_to(map)
-    map.save(f'mapka_{user["name"]}.html')
+    for user in query_result:
+        folium.Marker(
+            location=city,
+            popup=f'Tu rządzi {user[2]} z GEOINFORMATYKi 2023 \n'
+            f'Liczba postow: {user[4]}').add_to(map)
+    map.save(f'mapka_{query_result[0][1]}.html')
 
-
-def get_map_of(users: list[dict, dict]) -> None:
+def get_map_of() -> None:
     map = folium.Map(
         location=[52.3, 21.8],
         tiles='OpenStreetMap',
         zoom_start=14, )
-    for user in users:
+    sql_query_1 = f"SELECT * FROM public.aplikacjon;"
+    cursor.execute(sql_query_1)
+    query_result = cursor.fetchall()
+    for user in query_result:
         folium.Marker(
-            location=get_cooordinate_of(city=user['city']),
-            popup=f'Użytkownik: {user["name"]}\n'
-                  f'Liczba postów {user["posts"]}'
+            location=get_cooordinate_of(city=user[1]),
+            popup=f'Użytkownik: {user[2]}\n'
+                  f'Liczba postów {user[4]}'
         ).add_to(map)
         map.save(f'mapka.html')
 
-def update_user(users_list: list[dict, dict]) -> None:
-    nick_of_user = input("Podaj nick użytkownika do modyfikacji:")
-    print(nick_of_user)
-    for user in users_list:
-        if user["nick"] == nick_of_user:
-            print("Znaleziono !!!")
-            user['name'] = input("Podaj nowe imię: ")
-            user['nick'] = input("Podaj nowA ksywkę: ")
-            user['posts'] = int(input("Podaj liczbę postów: "))
-            user['city'] = int(input("Podaj miasto:"))
-
+# POGODA ======================
 def pogoda_z(miasto: str):
     url = f'https://danepubliczne.imgw.pl/api/data/synop/station/{miasto}'
     return requests.get(url).json()
+class User:
+    def __init__(self, city, name, nick, posts):
+        self.city = city
+        self.name=name
+        self.nick=nick
+        self.posts=posts
+    def pogoda_z(self,miasto: str):
+        URL = f'https://danepubliczne.imgw.pl/api/data/synop/station/{miasto}'
+        return requests.get(URL).json()
+
+# npc_1=User(city='warszawa', name='Agata', nick='Drzygalo', posts=123)
+# npc_2=User(city='zamosc',  name='Andrew', nick='Tate', posts=888)
+# print(npc_1.city)
+# print(npc_2.city)
+#
+# print(npc_1.pogoda_z(npc_1.city))
+# print(npc_2.pogoda_z(npc_2.city))

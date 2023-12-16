@@ -1,7 +1,7 @@
 from dane import users_list
 from my_fanctiones import gui
 
-gui(users_list)
+gui()
 
 #  TODO dodac tabele do bazy danych reprezentujaca uzytkownika
 #  TODO wlaczyc do aktualnego kodu baze danych
