@@ -22,9 +22,10 @@ def add_user_to() -> None:
     posts = input('Podaj liczbe postow!')
     city = input('Podaj miasto!')
     nick = input('Podaj nick!')
-    sql_query_1 = f"INSERT INTO public.aplikacjon(city, name, nick, posts) VALUES('{nick['city']}', '{nick['name']}', '{nick['nick']}', {nick['posts']});"
+    sql_query_1 = f"INSERT INTO public.aplikacjon(city, name, nick, posts) VALUES('{city}', '{name}', '{nick}', {posts});"
     cursor.execute(sql_query_1)
     db_params.commit()
+
 
 
 def remove_user_from() -> None:
@@ -59,7 +60,7 @@ def show_users_from() -> None:
     for row in query_result:
         print(f'Twój znajomy {row[2]} dodał {row[4]}')
 
-def update_user(users_list: list[dict, dict]) -> None:
+def update_user() -> None:
     nick_of_user = input("Podaj nick użytkownika do modyfikacji:")
     sql_query_1 = f"SELECT * FROM public.aplikacjon WHERE nick='{nick_of_user}';"
     cursor.execute(sql_query_1)
