@@ -1,63 +1,51 @@
-from bs4 import BeautifulSoup
-import requests
-import re
-import folium
+import sqlalchemy
 
-#pobranie strony internetowej
-
-nazwy_miejscowosci = ['Opoczno', 'Lublin', 'Ślipcze', 'Czumów', 'Berlin']
-def get_cooordinate_of(city:str)->list[float,float]:
-    # pobranie strony internetowej
-
-    adres_URL = f'https://pl.wikipedia.org/wiki/{city}'
-    response = requests.get(url=adres_URL)
-    response_html = BeautifulSoup(response.text, 'html.parser')
-
-    # pobranie współrzędnych z treści strony internetowej
-
-    response_html_latitude = response_html.select('.latitude')[1].text  # . ponieważ class
-    response_html_latitude = float(response_html_latitude.replace(',', '.'))
-
-    response_html_longitude = response_html.select('.longitude')[1].text  # . ponieważ class
-    response_html_longitude = float(response_html_longitude.replace(',', '.'))
-
-    return[response_html_latitude, response_html_longitude]
-#for item in nazwy_miejscowosci:
-    #print(get_cooordinate_of(item))
+db_params = sqlalchemy.engine.URL.create(
+    drivername="postgresql+psycopg2",
+    username="postgres",
+    password="Psip_2023",
+    host="localhost",
+    database="postgres",
+    port=5432
+)
 
 
-#from .dane import users_list
+engine = sqlalchemy.create_engine(db_params)
+connection = engine.connect()
+#sql_query_1 = aglalchemy.text("INSERT INTO public.my_table( name) VALUES('kepa');")
+#sql_query_1 = sqlalchemy.text("select * from public.my_table;")
+#user=input('podaj nazwe zawodnika do usuniecia')
+#sql_query_1 = sqlalchemy.text("DELETE FROM public.my_table WHERE name='{user}';")
+# kogo_zamienic=input('podaj kogo zmienic')
+# na_kogo=input('podaj na kogo zamienic')
+# sql_query_1 = sqlalchemy.text("UPDATE public.my_table SET name= {'na_kogo'} WHERE name= {'kogo_zamienic'};")
 
-#Zwrócić mape z pinezką odnoszącą się do wskaznego na podstawie nazwy użytkownika podanej z klawiatury
-user = {"city": "Zamość", "name": "Kasia", "nick": "katarzyna", "posts": 32323},
-#Zwróci mapę z wszystkimi użytkownikami z danej listy
-##Rysowanie mapy
-def get_single_map_of(user: str) -> None:
-    city = get_cooordinate_of(user['city'])
-    map = folium.Map(
-        location=city,
-        tiles='OpenStreetMap',
-        zoom_start=14,)
-    folium.Marker(
-        location=city,
-        popup=f'Tu rządzi {user["name"]} z GEOINFORMATYKi 2023 \n OU YEAH!!!💃'
-    ).add_to(map)
-    map.save(f'mapka_{user["name"]}.html')
-    
-def get_map_of(users: list) -> None:
-    map = folium.Map(
-        location=[52.3, 21.8],
-        tiles='OpenStreetMap',
-        zoom_start=14,)
-    for user in users:
-        folium.Marker(
-            location=get_cooordinate_of(city=user['city']),
-            popup=f'Użytkownik: {user["name"]}\n'
-                  f'Liczba postów {user["posts"]}'
-        ).add_to(map)
-        map.save(f'mapka.html')
+def dodaj_uzytkownika(user: str):
+    sql_query_1 = sqlalchemy.text("INSERT INTO public.my_tabel( name) VALUES('{user}');")
+    connection.execute(sql_query_1)
+    connection.commit()
 
-from dane import users_list
+# cwok='staniu'
+# dodaj_uzytkownika(cwok)
 
-get_map_of(users_list)
+def usun_uzytkownika(user: str):
+    sql_query_1 = sqlalchemy.text("DELETE FROM public.my_tabel WHERE name='{user}';")
+    connection.execute(sql_query_1)
+    connection.commit()
 
+# cwok='staniu'
+# usun_uzytkownika(cwok)
+
+def aktualizuj_uzytkonika(user_1: str, user_2: str):
+    sql_query_1 = sqlalchemy.text("UPDATE public.my_tabel SET name= :user_1 WHERE name= :user_2;")
+    connection.execute(sql_query_1, {'user_1': user_1, 'user_2': user_2})
+    connection.commit()
+
+aktualizuj_uzytkonika(
+    user_1=input('kogo zaminic '),
+    user_2=input('na kogo zmienic '))
+
+
+
+# connection.execute(sql_query_1)
+# connection.commit()
