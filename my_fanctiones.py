@@ -27,30 +27,35 @@ def add_user_to() -> None:
     db_params.commit()
 
 
-
 def remove_user_from() -> None:
     """
-    remove object from list
+    remove custom object from list
     :param users_list: list - user list
     :return: None
     """
-    name = input('podaj imie uzytkownika do usuniecia')
+    name = input('podaj imie do usuniecia:')
     sql_query_1 = f"SELECT * FROM public.aplikacjon WHERE name='{name}';"
     cursor.execute(sql_query_1)
     query_result = cursor.fetchall()
-    print('Znaleziono uzytkownikow :')
-    print('0: Usun wszystkich zmienionych uzytkownikow')
+    print(f'znaleziono ')
+    print('0: usun wszystkich znalezionych użytkowników')
+
     for numerek, user_to_be_removed in enumerate(query_result):
-        print(f'{numerek + 1}: {user_to_be_removed}')
-    numer = int(input(f'Wybierz uzytkownika do usuniecia'))
+        print(f'{numerek + 1}. {user_to_be_removed}')
+
+    numer = int(input(f'Podaj użytkownika do usunięcia '))
+
     if numer == 0:
-        sql_query_2 = f"DELETE * FROM public.aplikacjon;"
+        sql_query_2 = f"DELETE FROM public.aplikacjon;"
         cursor.execute(sql_query_2)
         db_params.commit()
-    else:
+    elif 0 < numer <= len(query_result):
+        user_id_to_remove = query_result[numer - 1][0]
         sql_query_2 = f"DELETE FROM public.aplikacjon WHERE name='{query_result[numer - 1][2]}';"
         cursor.execute(sql_query_2)
         db_params.commit()
+    else:
+        print('Błędny numer, nie usunięto żadnego użytkownika.')
 
 
 def show_users_from() -> None:
@@ -131,21 +136,30 @@ def get_cooordinate_of(city: str) -> list[float, float]:
 
 ##Rysowanie mapy
 def get_single_map_of() -> None:
-    city = input('Wpisz miasto uzytkownika: ')
+    city = input('Wpisz miasto użytkownika: ')
     sql_query_1 = f"SELECT * FROM public.aplikacjon WHERE city='{city}';"
     cursor.execute(sql_query_1)
     query_result = cursor.fetchall()
-    city = get_cooordinate_of(city)
-    map = folium.Map(
-        location=city,
-        tiles='OpenStreetMap',
-        zoom_start=14, )
-    for user in query_result:
-        folium.Marker(
-            location=city,
-            popup=f'Tu rządzi {user[2]} z GEOINFORMATYKi 2023 \n'
-            f'Liczba postow: {user[4]}').add_to(map)
-    map.save(f'mapka_{query_result[0][1]}.html')
+
+    if query_result:
+        city_coordinates = get_cooordinate_of(city)
+        map = folium.Map(
+            location=city_coordinates,
+            tiles='OpenStreetMap',
+            zoom_start=14
+        )
+
+        for user in query_result:
+            folium.Marker(
+                location=city_coordinates,
+                popup=f'Tu rządzi {user[2]} z GEOINFORMATYKi 2023 \n'
+                      f'Liczba postów: {user[4]}'
+            ).add_to(map)
+
+        map.save(f'mapka_{query_result[0][1]}.html')
+    else:
+        print('Brak wyników zapytania. Nie można utworzyć mapy.')
+
 
 def get_map_of() -> None:
     map = folium.Map(
@@ -165,22 +179,50 @@ def get_map_of() -> None:
 
 # POGODA ======================
 def pogoda_z(miasto: str):
-    url = f'https://danepubliczne.imgw.pl/api/data/synop/station/{miasto}'
-    return requests.get(url).json()
-class User:
-    def __init__(self, city, name, nick, posts):
-        self.city = city
-        self.name=name
-        self.nick=nick
-        self.posts=posts
-    def pogoda_z(self,miasto: str):
-        URL = f'https://danepubliczne.imgw.pl/api/data/synop/station/{miasto}'
-        return requests.get(URL).json()
+    URL = f'https://danepubliczne.imgw.pl/api/data/synop/station/{miasto}'
+    return requests.get(URL).json()
+import requests
 
-# npc_1=User(city='warszawa', name='Agata', nick='Drzygalo', posts=123)
-# npc_2=User(city='zamosc',  name='Andrew', nick='Tate', posts=888)
-# print(npc_1.city)
-# print(npc_2.city)
-#
-# print(npc_1.pogoda_z(npc_1.city))
-# print(npc_2.pogoda_z(npc_2.city))
+class User:
+    def __init__(self, name, nick, posts):
+        self.name = name
+        self.nick = nick
+        self.posts = posts
+        self.city = self.get_user_city()
+
+    def get_user_city(self):
+        # Funkcja pozwalająca użytkownikowi podać nazwę miasta
+        return input(f'{self.name}, podaj nazwę miasta, dla którego chcesz sprawdzić pogodę: ')
+
+    def pogoda_z(self):
+        # Ignorowanie wielkości liter w nazwie miasta
+        city_lowercase = self.city.lower()
+        URL = f'https://danepubliczne.imgw.pl/api/data/synop/station/{city_lowercase}'
+        try:
+            response = requests.get(URL)
+            response.raise_for_status()  # Sprawdzenie, czy zapytanie było udane
+
+            # Sprawdzenie, czy odpowiedź zawiera dane (można dostosować do konkretnego formatu odpowiedzi)
+            if 'error' in response.json():
+                print(f'API zwróciło błąd: {response.json()["error"]}')
+                return None
+
+            # Zwrócenie danych pogodowych w formie słownika (format JSON)
+            return response.json()
+        except requests.exceptions.RequestException as e:
+            # Obsługa błędów związanych z zapytaniem HTTP
+            print(f'Błąd zapytania HTTP: {e}')
+            return None
+        except ValueError as e:
+            # Obsługa błędów związanych z parsowaniem JSON
+            print(f'Błąd parsowania JSON: {e}')
+            return None
+
+# Utworzenie dwóch obiektów User
+npc_1 = User(name='Damian', nick='pooo', posts=13)
+npc_2 = User(name='Katarzyna', nick='mmm', posts=1)
+
+# Pobranie prognozy pogody dla każdego użytkownika
+print(npc_1.pogoda_z())
+print(npc_2.pogoda_z())
+
