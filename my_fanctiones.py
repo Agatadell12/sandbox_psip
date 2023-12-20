@@ -222,7 +222,7 @@ class User:
 npc_1 = User(name='Damian', nick='pooo', posts=13)
 npc_2 = User(name='Katarzyna', nick='mmm', posts=1)
 
-# Pobranie prognozy pogody dla każdego użytkownika
+#Pobranie prognozy pogody dla każdego użytkownika
 print(npc_1.pogoda_z())
 print(npc_2.pogoda_z())
 
