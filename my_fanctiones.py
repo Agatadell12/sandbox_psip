@@ -51,7 +51,7 @@ def remove_user_from() -> None:
         db_params.commit()
     elif 0 < numer <= len(query_result):
         user_id_to_remove = query_result[numer - 1][0]
-        sql_query_2 = f"DELETE FROM public.aplikacjon WHERE name='{query_result[numer - 1][2]}';"
+        sql_query_2 = f"DELETE FROM public.aplikacjon WHERE id='{query_result[numer - 1][0]}';"
         cursor.execute(sql_query_2)
         db_params.commit()
     else:
@@ -83,7 +83,7 @@ def update_user() -> None:
 
 def gui() -> None:
     while True:
-        print(f'MENU'
+        print(f'MENU\n'
               f'0: Wyjdź\n'
               f'1: Wyświetl użytkowników\n'
               f'2: Dodaj użytkownika\n'
@@ -98,6 +98,7 @@ def gui() -> None:
         match menu_option:
             case '0':
                 print('Kończę prace')
+                break
             case '1':
                 print('Wyświetl nazwę użytkownika')
                 show_users_from()
