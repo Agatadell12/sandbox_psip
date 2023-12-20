@@ -6,11 +6,11 @@ from my_fanctiones import show_users_from
 from my_fanctiones import update_user
 
 
-#gui()
+gui()
 
 #remove_user_from()
 #add_user_to()
-pogoda_z('Wrocław')
+#pogoda_z('Wrocław')
 #show_users_from()
 #update_user()
 
